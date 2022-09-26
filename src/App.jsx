@@ -1,5 +1,5 @@
 import * as React from "react";
-
+import { ThemeContext } from "./components/ColorThemeProvider";
 import "./App.css";
 
 const colorTheme = {
@@ -17,18 +17,25 @@ const colorTheme = {
   },
 };
 
-const CoolContent = ({ theme, onColorChange, ...props }) => (
-  <div {...props}>
-    <select name="colorPicker" id="colorPicker" onChange={onColorChange}>
-      <option value={"default"}>Default</option>
-      <option value={"red"}>Red</option>
-      <option value={"green"}>Green</option>
-    </select>
-    <button style={colorTheme[theme]} onClick={() => alert("bet")}>
-      Cool
-    </button>
-  </div>
-);
+const CoolContent = ({ ...props }) => {
+  const { theme, setTheme } = React.useContext(ThemeContext);
+  return (
+    <div {...props}>
+      <select
+        name="colorPicker"
+        id="colorPicker"
+        onChange={(e) => setTheme(e.target.value)}
+      >
+        <option value={"default"}>Default</option>
+        <option value={"red"}>Red</option>
+        <option value={"green"}>Green</option>
+      </select>
+      <button style={colorTheme[theme]} onClick={() => alert("bet")}>
+        Cool
+      </button>
+    </div>
+  );
+};
 
 const CoolComponentC = (props) => (
   <div>
@@ -51,27 +58,41 @@ const CoolComponentA = (props) => (
   </div>
 );
 
-const Main = ({ theme, onColorChange }) => {
+const Main = () => {
   return (
     <main>
       <h1>This is my main.</h1>
-      <CoolComponentA theme={theme} onColorChange={onColorChange} />
+      <CoolComponentA />
     </main>
   );
 };
 
-function App() {
-  const [theme, setTheme] = React.useState("default");
+const HeaderComponentA = () => {
+  const { theme } = React.useContext(ThemeContext);
 
-  const handleColorChange = (e) => {
-    e.preventDefault();
-    setTheme(e.target.value);
-  };
+  return <div style={colorTheme[theme]}>My React Site! 🐶</div>;
+};
+
+const Header = () => {
+  return (
+    <header>
+      <HeaderComponentA />
+    </header>
+  );
+};
+
+const Footer = () => {
+  const { theme } = React.useContext(ThemeContext);
+
+  return <footer style={colorTheme[theme]}>Welcome to Foot.</footer>;
+};
+
+function App() {
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
-      <header>My React Site! 🐶</header>
-      <Main theme={theme} onColorChange={handleColorChange} />
-      <footer>Welcome to Foot.</footer>
+      <Header />
+      <Main />
+      <Footer />
     </div>
   );
 }
